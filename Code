@@ -1,0 +1,107 @@
+Sub SheetSwitch()
+'
+Application.ScreenUpdating = False
+' SheetSwitch Macro
+'
+'
+    Dim folderPath As String
+    Dim fileName As String
+    Dim sanitizedFileName As String
+    Dim fullPath As String
+    Dim invalidChars As Variant
+    Dim i As Integer
+    
+    Range("A2").Select
+    ActiveCell.Rows("1:1").EntireRow.Select
+    Selection.Copy
+    Sheets("MAP Key").Select
+    Range("E4").Select
+    Selection.PasteSpecial Paste:=xlPasteAll, Operation:=xlNone, SkipBlanks:= _
+    False, Transpose:=True
+
+'Save Once
+
+' Set the folder to save the file in
+    folderPath = "C:\Users\taha.mandviwala\Desktop\VBA & Macros Learning\"
+
+    ' Get filename from a cell (for example, A1 in Sheet1)
+    fileName = ThisWorkbook.Sheets("Summary").Range("B2").Value
+
+    ' Check if filename is not empty
+    If Trim(fileName) = "" Then
+        MsgBox "Cell B2 is empty. Please enter a file name.", vbExclamation
+    End If
+
+    ' Sanitize filename by replacing invalid characters
+    invalidChars = Array("\", "/", ":", "*", "?", """", "<", ">", "|")
+    sanitizedFileName = fileName
+    For i = LBound(invalidChars) To UBound(invalidChars)
+        sanitizedFileName = Replace(sanitizedFileName, invalidChars(i), "-")
+    Next i
+
+    ' Add file extension if not included
+    If Not LCase(Right(sanitizedFileName, 5)) = ".xlsm" Then
+        sanitizedFileName = sanitizedFileName & ".xlsm"
+    End If
+
+    ' Create full path
+    fullPath = folderPath & sanitizedFileName
+
+    ' Save the workbook as macro-enabled
+    ActiveWorkbook.SaveAs fileName:=fullPath, FileFormat:=xlOpenXMLWorkbookMacroEnabled
+    
+'' 1st Save
+
+'Looping
+Do While ActiveCell <> ""
+    
+    Sheets("Sheet2").Select
+    ActiveCell.Offset(1, 0).Rows("1:1").EntireRow.Select
+    Application.CutCopyMode = False
+    Selection.Copy
+    Sheets("MAP Key").Select
+    Range("E4").Select
+    Selection.PasteSpecial Paste:=xlPasteAll, Operation:=xlNone, SkipBlanks:= _
+    False, Transpose:=True
+
+    Dim file As String
+    Dim sanitizedFile As String
+    Dim fPath As String
+    Dim inv As Variant
+    Dim j As Integer
+    ' Set the folder to save the file in
+    fPath = "C:\Users\taha.mandviwala\Desktop\VBA & Macros Learning\"
+
+    ' Get filename from a cell (for example, A1 in Sheet1)
+    file = ThisWorkbook.Sheets("Summary").Range("B2").Value
+
+    ' Check if filename is not empty
+    If Trim(file) = "" Then
+        MsgBox "Cell B2 is empty. Please enter a file name.", vbExclamation
+    End If
+
+    ' Sanitize filename by replacing invalid characters
+    inv = Array("\", "/", ":", "*", "?", """", "<", ">", "|")
+    sanitizedFile = file
+    For j = LBound(inv) To UBound(inv)
+        sanitizedFile = Replace(sanitizedFile, inv(j), "-")
+    Next j
+
+    ' Add file extension if not included
+    If Not LCase(Right(sanitizedFile, 5)) = ".xlsm" Then
+        sanitizedFile = sanitizedFile & ".xlsm"
+    End If
+
+    ' Create full path
+    Full = fPath & sanitizedFile
+
+    ' Save the workbook as macro-enabled
+    ActiveWorkbook.SaveAs fileName:=Full, FileFormat:=xlOpenXMLWorkbookMacroEnabled
+    
+Loop
+
+MsgBox "All files saved successfully.", vbCritical
+
+End Sub
+
+
